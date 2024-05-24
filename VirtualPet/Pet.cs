@@ -1,34 +1,38 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using System.Security.Cryptography.X509Certificates;
-
-namespace VirtualPet
+﻿namespace VirtualPet
 {
-    internal class Pet(string name, bool isHungry, bool isPoopy, bool isCuddly)
+    internal class Pet()
     {
-        public string Name { get; private set; } = name;
-        public bool IsHungry { get; private set; } = isHungry;
-        public bool IsPoopy { get; private set; } = isPoopy;
-        public bool IsCuddly { get; private set; } = isCuddly;
+        public string Name { get; private set; }
+        public bool IsHungry { get; private set; }
+        public bool IsPoopy { get; private set; }
+        public bool IsCuddly { get; private set; }
 
         public bool running = true;
 
-        public Pet()
-        {
-            
-        }
+        public bool isDead = false;
 
-        public Pet(string name)
+        public Pet(string name) : this()
         {
             Name = name;
             IsHungry = true;
-            IsPoopy = true;
+            IsPoopy = false;
             IsCuddly = true;
         }
-        
+
+        public Pet(string name, bool isHungry, bool isPoopy, bool isCuddly) : this()
+        {
+            Name = name;
+            IsHungry = isHungry;
+            IsPoopy = isPoopy;
+            IsCuddly = isCuddly;
+        }
+
         Random random = new Random();
+
 
         public void RunShowPetCareOptions()
         {
+            Console.WriteLine();
             Console.WriteLine("Pick an option:");
             running = true;
             while (running)
@@ -40,6 +44,8 @@ namespace VirtualPet
                 Console.WriteLine("5. Exit game");
                 int input = Convert.ToInt32(Console.ReadLine());
                 RunPickedOption(input);
+
+
             }
         }
 
@@ -59,7 +65,8 @@ namespace VirtualPet
                 case 4:
                     running = false;
                     break;
-                case 5: Environment.Exit(1);
+                case 5:
+                    Environment.Exit(1);
                     break;
                 default:
                     Console.WriteLine("Please pick a valid option"); RunShowPetCareOptions();
@@ -75,13 +82,17 @@ namespace VirtualPet
             if (IsHungry)
             {
                 Console.WriteLine($"You fed {Name}");
+                DoesItDie();
+                if (isDead) DeathMessage(1);
+
                 IsHungry = false;
             }
             else
             {
                 Console.WriteLine($"{Name} was not hungry");
-                RunShowPetCareOptions();
+
             }
+            RunShowPetCareOptions();
         }
         public void RunOption2()
         {
@@ -91,13 +102,16 @@ namespace VirtualPet
             if (IsPoopy)
             {
                 Console.WriteLine($"You took {Name} to use the bathroom");
+                DoesItDie();
+                if (isDead) DeathMessage(2);
                 IsPoopy = false;
             }
             else
             {
                 Console.WriteLine($"{Name} did not need to use the bathroom");
-                RunShowPetCareOptions();
+
             }
+            RunShowPetCareOptions();
         }
         public void RunOption3()
         {
@@ -107,13 +121,16 @@ namespace VirtualPet
             if (IsCuddly)
             {
                 Console.WriteLine($"You cuddled {Name}");
+                DoesItDie();
+                if (isDead) DeathMessage(3);
                 IsCuddly = false;
             }
             else
             {
                 Console.WriteLine($"{Name} did not want to be cuddled");
-                RunShowPetCareOptions();
+
             }
+            RunShowPetCareOptions();
         }
 
         public bool RandomBool()
@@ -122,6 +139,37 @@ namespace VirtualPet
             bool randomBool = randomInt == 0 ? true : false;
 
             return randomBool;
+        }
+
+        public void DoesItDie()
+        {
+            int deathChance = random.Next(0, 60);
+            if (deathChance == 0)
+            {
+                isDead = true;
+            }
+        }
+
+        public void DeathMessage(int input)
+        {
+            switch (input)
+            {
+                case 1:
+                    Console.WriteLine("Your pet died of food poisoning");
+                    Environment.Exit(2);
+                    break;
+                case 2:
+                    Console.WriteLine("Your died of violent diarrhea");
+                    Environment.Exit(3);
+                    break;
+                case 3:
+                    Console.WriteLine("You squished your pet to death");
+                    Environment.Exit(4);
+                    break;
+                default:
+                    break;
+
+            }
         }
     }
 }

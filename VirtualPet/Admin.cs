@@ -4,9 +4,9 @@
     {
         private List<Pet> _pets = new List<Pet>()
         {
-            new("Nico", 7, false, true, true),
-            new("Bianca", 3, true, false, false),
-            new("Loki",  6, false,false,false),
+            new("Nico", false, true, true),
+            new("Bianca", true, false, false),
+            new("Loki", false,false,false),
         };
 
         public void RunVirtualPetProgram()
@@ -14,13 +14,25 @@
             bool runningMain = true;
             while (runningMain)
             {
+                Console.Clear();
+                PrintTitle();
                 Console.WriteLine("Welcome to Virtual Pet!");
                 Console.WriteLine("Which pet would you like to take care of?");
                 RunShowPets();
                 Pet pickedPet = RunPickPet();
                 Console.WriteLine($"You picked: {pickedPet.Name}");
+                Console.WriteLine();
                 pickedPet.RunShowPetCareOptions();
             }
+        }
+
+        public void PrintTitle()
+        {
+            Console.WriteLine(@" _    ___      __              __   ____       __ 
+| |  / (_)____/ /___  ______ _/ /  / __ \___  / /_
+| | / / / ___/ __/ / / / __ `/ /  / /_/ / _ \/ __/
+| |/ / / /  / /_/ /_/ / /_/ / /  / ____/  __/ /_  
+|___/_/_/   \__/\__,_/\__,_/_/  /_/    \___/\__/");
         }
 
         private void RunShowPets()
@@ -30,32 +42,40 @@
                 Console.WriteLine($"{i + 1}. {_pets[i].Name}");
             }
             Console.WriteLine("If you would like to make your own pet, tap 0.");
-            int input= Convert.ToInt32(Console.ReadLine());
-            if (input == 0)
-            {
-                RunMakePet();
-            }
+
         }
 
         private void RunMakePet()
         {
-
+            Console.WriteLine("Name your pet");
+            string? petName = Console.ReadLine();
+            Pet newPet = new Pet(petName);
+            _pets.Add(newPet);
+            Console.WriteLine("\n");
+            RunShowPets();
         }
 
         private Pet RunPickPet()
         {
-            bool runningPickPet= false;
+            bool runningPickPet = true;
             int input = 0;
-            do
+            while (runningPickPet)
             {
                 Console.WriteLine("Please type the number of the pet:");
-                 input = Convert.ToInt32(Console.ReadLine());
-                if (input > _pets.Count || input <= 0)
+                input = Convert.ToInt32(Console.ReadLine());
+                if (input > _pets.Count || input < 0)
                 {
-                    runningPickPet = true;
+                    Console.WriteLine("Yooo");
+
                 }
-            } while (runningPickPet);
-           
+                else if (input == 0)
+                {
+                    RunMakePet();
+                }
+                else { runningPickPet = false; }
+
+
+            };
 
             return _pets.Where(p => p.Name == _pets[input - 1].Name).FirstOrDefault();
         }
